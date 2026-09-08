@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="gl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Panda · Cena Bagude | Poetas do Trago</title>
+<meta name="description" content="Coñece aos 10 fundadores de Cena Bagude, a panda de Portomarín detrás da camiseta e da festa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Work+Sans:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* Axuste específico para que o número de cada chaval non se corte nunca */
+  .panda-grid {
+    padding-top: 18px; /* Dá aire aos badges superiores */
+  }
+  .cromo-card {
+    overflow: visible !important; /* Evita que o número saia cortado */
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cromo-num {
+    top: -14px !important;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  }
+  .cromo-avatar-icon {
+    width: 64px;
+    height: 64px;
+    margin: 6px auto 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #2b241a, #141210);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    transition: transform .25s ease;
+  }
+  .cromo-card:hover .cromo-avatar-icon {
+    transform: scale(1.1) rotate(5deg);
+    color: #fff;
+    border-color: #fff;
+  }
+  .cromo-avatar-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="index.html#top" class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+      </div>
+      <div>
+        <div class="brand-text">CENA<span>BAGUDE</span></div>
+      </div>
+      <span class="brand-badge">Portomarín</span>
+    </a>
+
+    <nav class="main-nav">
+      <a href="index.html#camisetas">A Camiseta</a>
+      <a href="index.html#orixe">Orixe</a>
+      <a href="index.html#portomarin">Portomarín</a>
+      <a href="index.html#sorteos">A Festa</a>
+      <a href="panda.html" style="color:var(--gold);">A Panda</a>
+      <a href="https://www.instagram.com/cenabagude" target="_blank" rel="noopener" class="nav-btn-ig" title="Instagram">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@cenabagude" target="_blank" rel="noopener" class="tenda-link-btn" title="TikTok @cenabagude" style="background:#000; color:#fff; border-color:var(--line);">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V9.05a8.16 8.16 0 0 0 4.91 1.64V7.24a4.85 4.85 0 0 1-1-.55z"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO DA PANDA -->
+<section class="panda-hero">
+  <div class="wrap">
+    <a href="index.html" class="breadcrumb-back">← Volver á páxina principal</a>
+    <span class="section-badge">Os Fundadores</span>
+    <h1 class="section-heading">Os 10 da Panda</h1>
+    <p style="color:var(--cream-muted); max-width:620px; margin:0 auto;">
+      Os que empezaron todo nunha mesa en Bagude. Cada un co seu número, o seu alcume de combate nocturno, o seu emblema e a súa frase de guerra. Pasa o rato por riba de cada cromo.
+    </p>
+  </div>
+</section>
+
+<!-- GRID COMPLETO DE CROMOS -->
+<section class="panda-section" id="panda">
+  <div class="wrap">
+    <div class="panda-grid" id="cromoGrid">
+      <!-- Inxectado por JS con cadansúa icona SVG única -->
+    </div>
+
+    <div class="panda-cta-box glass">
+      <h2 class="section-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);">Faltas ti nesta mesa</h2>
+      <p style="color:var(--cream-muted); max-width:520px; margin:14px auto 26px;">Ponte a camiseta oficial e faite un oco na próxima cea de Bagude.</p>
+      <a href="index.html#camisetas" class="btn btn-gold">Pedir a miña camiseta</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="padding: 35px 0; border-top: 1px solid var(--line); text-align:center;">
+  <div class="wrap">
+    <p style="font-family:'Anton'; font-size:1.2rem; color:var(--gold); letter-spacing:0.06em;">CENA BAGUDE · PORTOMARÍN</p>
+    <p style="color:var(--cream-muted); font-size:0.85rem; margin-top:6px;">Feito con amigos, queimada e Estrella Galicia. © 2026</p>
+    <div style="display:flex; justify-content:center; gap:16px; margin-top:14px;">
+      <a href="https://www.instagram.com/cenabagude" target="_blank" style="color:var(--cream-muted); font-size:0.85rem;">Instagram: @cenabagude</a>
+      <span style="color:var(--line);">·</span>
+      <a href="https://www.tiktok.com/@cenabagude" target="_blank" style="color:var(--cream-muted); font-size:0.85rem;">TikTok: @cenabagude</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Os 10 da panda cos seus nomes reais, alcumes, roles, frases e iconas SVG persoais (non emoticonos)
+  const pandaMembers = [
+    {
+      num: "01",
+      name: "Carlos Gravania",
+      alias: "O Gravitacional",
+      role: "Ancoraxe da Mesa",
+      frase: "Onde el se senta, ninguén se move da mesa.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+    },
+    {
+      num: "02",
+      name: "Ivan Cruz",
+      alias: "O Cruzado",
+      role: "Defensor da Ronda",
+      frase: "Ronda que empeza, ronda que se bebe enteira.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="8" x2="19" y2="8"/><circle cx="12" cy="8" r="4"/></svg>'
+    },
+    {
+      num: "03",
+      name: "Adrian Caldelas",
+      alias: "O Caldeirón",
+      role: "Mestre da Queimada",
+      frase: "Garda o lume vivo e o conxuro ata o amencer.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>'
+    },
+    {
+      num: "04",
+      name: "Adan Tandy",
+      alias: "O Chispas",
+      role: "O Primeiro en Chegar",
+      frase: "Sempre coa primeira botella aberta na barra.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>'
+    },
+    {
+      num: "05",
+      name: "Hugo Bagude",
+      alias: "O Fundador",
+      role: "Alma de Bagude",
+      frase: "El puxo o nome, o sitio e o motivo de xuntarse.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-7"/><path d="M9 15c-3 0-5-2-5-5a5 5 0 0 1 8-3.8A5 5 0 0 1 20 10c0 3-2 5-5 5h-6z"/></svg>'
+    },
+    {
+      num: "06",
+      name: "Brian Kupo",
+      alias: "O Enigma",
+      role: "Estratexia do Xogo",
+      frase: "Ninguén sabe moi ben que fai, pero nunca falla.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>'
+    },
+    {
+      num: "07",
+      name: "Esteban Maki",
+      alias: "O Samurái",
+      role: "Encargado do Menú",
+      frase: "Corta os debates e pide comida para todo o pobo.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>'
+    },
+    {
+      num: "08",
+      name: "Diego Luicci",
+      alias: "O Elegante",
+      role: "O Padrino da Festa",
+      frase: "Vai de verbena coma se fose unha estrea de cine.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>'
+    },
+    {
+      num: "09",
+      name: "Pedro Chucho",
+      alias: "O Fiel",
+      role: "Garda do Sorteo",
+      frase: "Custodia os premios e nunca deixa a ninguén tirado.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="4.5" cy="9.5" r="2.5"/><circle cx="9" cy="5.5" r="2.5"/><circle cx="15" cy="5.5" r="2.5"/><circle cx="19.5" cy="9.5" r="2.5"/><path d="M12 12c-3 0-5 2-5 5 0 2.5 2 4 5 4s5-1.5 5-4c0-3-2-5-5-5z"/></svg>'
+    },
+    {
+      num: "10",
+      name: "Nico Nico Vázquez",
+      alias: "O Dobre",
+      role: "Ración Doble",
+      frase: "Dobre nome, dobre brinde e festa por partida dobre.",
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+    }
+  ];
+
+  const cromoGrid = document.getElementById('cromoGrid');
+  pandaMembers.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'cromo-card';
+    card.innerHTML = `
+      <div class="cromo-num">#${m.num}</div>
+      <div class="cromo-front">
+        <div class="cromo-avatar-icon">${m.svg}</div>
+        <div class="cromo-name">${m.name}</div>
+        <div class="cromo-alias">"${m.alias}"</div>
+        <div class="cromo-role">${m.role}</div>
+      </div>
+      <div class="cromo-back">
+        <div>
+          <p class="cromo-back-quote">"${m.frase}"</p>
+        </div>
+      </div>
+    `;
+    cromoGrid.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
