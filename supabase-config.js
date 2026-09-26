@@ -14,5 +14,5 @@
 // iniciar sesión como administrador (ver admin.html).
 // ============================================================
 
-window.CENA_SUPABASE_URL = "https://pqqirodppxjuuuiksduo.supabase.co/rest/v1/";
+window.CENA_SUPABASE_URL = "https://pqqirodppxjuuuiksduo.supabase.co";
 window.CENA_SUPABASE_ANON_KEY = "sb_publishable_c-SnRIbpJHKtmFhmARSQfw_zZrgJlj-";
