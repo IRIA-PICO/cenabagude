@@ -523,11 +523,13 @@
   .cromo-card{ min-height: 230px; }
 
   .tenda-link-btn{
-    display:inline-flex; align-items:center; justify-content:center;
-    background:#1a1815; border:1px solid var(--gold); color: var(--gold);
-    width:42px; height:42px; border-radius:50%; transition: transform .2s, box-shadow .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #000; border: 1px solid var(--line); color: #fff !important;
+    padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+    transition: transform .2s, box-shadow .2s;
   }
-  .tenda-link-btn:hover{ transform: scale(1.08); box-shadow: 0 0 15px var(--gold-glow); }
+  .tenda-link-btn:hover{ transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,255,255,0.18); border-color: var(--gold); }
+  .nav-btn-ig:hover{ transform: translateY(-2px); }
 
   .panda-cta-box{
     margin-top: 60px; text-align:center; padding: 46px; border-radius: 12px;
@@ -667,19 +669,52 @@
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
     padding: 26px 0; border-bottom: 1px solid var(--line); margin-bottom: 30px;
   }
-  .admin-filters{ display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+  .admin-stats{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 30px; }
+  @media(max-width: 760px){ .admin-stats{ grid-template-columns: repeat(2, 1fr); } }
+  .admin-stat-card{
+    background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 20px; text-align: left;
+  }
+  .admin-stat-num{ font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--gold); line-height: 1; }
+  .admin-stat-label{ font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cream-muted); margin-top: 6px; }
+
+  .admin-toolbar{ display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+  .admin-filters{ display: flex; flex-wrap: wrap; gap: 10px; }
   .admin-filter-btn{
     padding: 10px 18px; border-radius: 100px; border: 1.5px solid var(--line);
     background: transparent; color: var(--cream-muted); font-size: 0.8rem; font-weight: 700;
     letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all .2s ease;
+    display: inline-flex; align-items: center; gap: 6px;
   }
+  .admin-filter-btn .count{
+    background: rgba(212,175,55,0.15); color: var(--gold); border-radius: 100px;
+    font-size: 0.7rem; padding: 1px 7px;
+  }
+  .admin-filter-btn.active .count{ background: rgba(0,0,0,0.2); color: #000; }
   .admin-filter-btn:hover{ border-color: var(--gold); color: var(--gold); }
   .admin-filter-btn.active{ background: var(--gold); border-color: var(--gold); color: #000; }
 
+  .admin-search{
+    background: #1f1c18; border: 1.5px solid var(--line); color: var(--cream);
+    padding: 11px 16px; border-radius: var(--radius); font-size: 0.88rem;
+    font-family: 'Work Sans', sans-serif; outline: none; min-width: 220px; transition: border-color .2s ease;
+  }
+  .admin-search:focus{ border-color: var(--gold); }
+
   .admin-orders{ display: flex; flex-direction: column; gap: 16px; }
   .admin-order-card{
-    background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px;
-    padding: 22px 26px; display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 20px; align-items: start;
+    background: var(--bg-card); border: 1px solid var(--line); border-left: 4px solid var(--line);
+    border-radius: 10px; padding: 22px 26px 22px 22px; display: grid;
+    grid-template-columns: auto 1.3fr 1fr; gap: 20px; align-items: start;
+    transition: border-color .2s ease;
+  }
+  .admin-order-card.st-unpaid{ border-left-color: var(--red-eg); }
+  .admin-order-card.st-paid{ border-left-color: var(--gold); }
+  .admin-order-card.st-delivered{ border-left-color: #5ec27a; }
+  .admin-order-avatar{
+    width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle, #2b241a, #141210);
+    border: 1.5px solid var(--gold); color: var(--gold); font-family: 'Anton', sans-serif;
+    font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   @media(max-width: 860px){ .admin-order-card{ grid-template-columns: 1fr; } }
   .admin-order-main{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; }

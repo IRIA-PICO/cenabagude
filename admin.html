@@ -60,12 +60,34 @@
       <button class="btn btn-outline btn-sm" id="logoutBtn" type="button">Pechar sesión</button>
     </div>
 
-    <div class="admin-filters" id="adminFilters">
-      <button class="admin-filter-btn active" data-filter="todos">Todos</button>
-      <button class="admin-filter-btn" data-filter="pendientes">Pendientes</button>
-      <button class="admin-filter-btn" data-filter="sin_pagar">Sin pagar</button>
-      <button class="admin-filter-btn" data-filter="preparados">Preparados</button>
-      <button class="admin-filter-btn" data-filter="entregados">Entregados</button>
+    <div class="admin-stats" id="adminStats">
+      <div class="admin-stat-card glass">
+        <div class="admin-stat-num" data-stat="total">0</div>
+        <div class="admin-stat-label">Pedidos totais</div>
+      </div>
+      <div class="admin-stat-card glass">
+        <div class="admin-stat-num" data-stat="sin_pagar">0</div>
+        <div class="admin-stat-label">Sen pagar</div>
+      </div>
+      <div class="admin-stat-card glass">
+        <div class="admin-stat-num" data-stat="preparados">0</div>
+        <div class="admin-stat-label">Preparados</div>
+      </div>
+      <div class="admin-stat-card glass">
+        <div class="admin-stat-num" data-stat="entregados">0</div>
+        <div class="admin-stat-label">Entregados</div>
+      </div>
+    </div>
+
+    <div class="admin-toolbar">
+      <div class="admin-filters" id="adminFilters">
+        <button class="admin-filter-btn active" data-filter="todos">Todos <span class="count" data-count="todos">0</span></button>
+        <button class="admin-filter-btn" data-filter="pendientes">Pendientes <span class="count" data-count="pendientes">0</span></button>
+        <button class="admin-filter-btn" data-filter="sin_pagar">Sin pagar <span class="count" data-count="sin_pagar">0</span></button>
+        <button class="admin-filter-btn" data-filter="preparados">Preparados <span class="count" data-count="preparados">0</span></button>
+        <button class="admin-filter-btn" data-filter="entregados">Entregados <span class="count" data-count="entregados">0</span></button>
+      </div>
+      <input type="text" id="adminSearch" class="admin-search" placeholder="Buscar por nome ou Instagram...">
     </div>
 
     <div id="ordersContainer" class="admin-orders">
@@ -98,9 +120,11 @@
   const logoutBtn = document.getElementById('logoutBtn');
   const ordersContainer = document.getElementById('ordersContainer');
   const adminFilters = document.getElementById('adminFilters');
+  const adminSearch = document.getElementById('adminSearch');
 
   let allOrders = [];
   let currentFilter = 'todos';
+  let searchTerm = '';
 
   function showPanel(){
     loginView.hidden = true;
@@ -161,6 +185,11 @@
     renderOrders();
   });
 
+  adminSearch.addEventListener('input', () => {
+    searchTerm = adminSearch.value.trim().toLowerCase();
+    renderOrders();
+  });
+
   async function loadOrders(){
     ordersContainer.innerHTML = '<div class="admin-loading">Cargando pedidos...</div>';
     const { data, error } = await db
@@ -177,8 +206,8 @@
     renderOrders();
   }
 
-  function filterOrders(orders){
-    switch(currentFilter){
+  function byFilter(orders, filter){
+    switch(filter){
       case 'pendientes': return orders.filter(o => !o.delivered);
       case 'sin_pagar': return orders.filter(o => !o.paid);
       case 'preparados': return orders.filter(o => o.prepared);
@@ -187,10 +216,38 @@
     }
   }
 
+  function bySearch(orders){
+    if (!searchTerm) return orders;
+    return orders.filter(o =>
+      (o.name || '').toLowerCase().includes(searchTerm) ||
+      (o.instagram || '').toLowerCase().includes(searchTerm)
+    );
+  }
+
+  function updateStatsAndCounts(){
+    const total = allOrders.length;
+    const sinPagar = allOrders.filter(o => !o.paid).length;
+    const preparados = allOrders.filter(o => o.prepared).length;
+    const entregados = allOrders.filter(o => o.delivered).length;
+    const pendientes = allOrders.filter(o => !o.delivered).length;
+
+    document.querySelector('[data-stat="total"]').textContent = total;
+    document.querySelector('[data-stat="sin_pagar"]').textContent = sinPagar;
+    document.querySelector('[data-stat="preparados"]').textContent = preparados;
+    document.querySelector('[data-stat="entregados"]').textContent = entregados;
+
+    document.querySelector('[data-count="todos"]').textContent = total;
+    document.querySelector('[data-count="pendientes"]').textContent = pendientes;
+    document.querySelector('[data-count="sin_pagar"]').textContent = sinPagar;
+    document.querySelector('[data-count="preparados"]').textContent = preparados;
+    document.querySelector('[data-count="entregados"]').textContent = entregados;
+  }
+
   function renderOrders(){
-    const orders = filterOrders(allOrders);
+    updateStatsAndCounts();
+    const orders = bySearch(byFilter(allOrders, currentFilter));
     if (!orders.length) {
-      ordersContainer.innerHTML = '<div class="admin-empty">Non hai pedidos neste filtro.</div>';
+      ordersContainer.innerHTML = '<div class="admin-empty">Non hai pedidos que coincidan.</div>';
       return;
     }
     ordersContainer.innerHTML = orders.map(o => orderCardHTML(o)).join('');
@@ -198,8 +255,11 @@
 
   function orderCardHTML(o){
     const date = new Date(o.created_at).toLocaleString('gl-ES', { dateStyle: 'short', timeStyle: 'short' });
+    const statusClass = o.delivered ? 'st-delivered' : (o.paid ? 'st-paid' : 'st-unpaid');
+    const initial = (o.name || '?').trim().charAt(0).toUpperCase();
     return `
-      <div class="admin-order-card glass" data-id="${o.id}">
+      <div class="admin-order-card glass ${statusClass}" data-id="${o.id}">
+        <div class="admin-order-avatar">${initial}</div>
         <div class="admin-order-main">
           <div>
             <div class="admin-order-field-label">Nome</div>
@@ -268,7 +328,7 @@
     }
     const order = allOrders.find(o => o.id === id);
     if (order) order[field] = value;
-    if (currentFilter !== 'todos') renderOrders();
+    renderOrders();
   });
 
   function escapeHTML(str){
