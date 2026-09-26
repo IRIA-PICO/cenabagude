@@ -574,3 +574,127 @@
     .festa-bento .feature-card{ grid-column: span 1 !important; flex-direction:column !important; }
     .festa-bento .feature-card:nth-child(4) .feature-card-icon{ margin-bottom:20px !important; }
   }
+  /* ============ FORMULARIO DE PEDIDO (MODAL) ============ */
+  .order-modal-overlay{
+    position: fixed; inset: 0; background: rgba(6,5,4,0.82);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; z-index: 999; opacity: 0; pointer-events: none;
+    transition: opacity .25s ease; backdrop-filter: blur(4px);
+  }
+  .order-modal-overlay.active{ opacity: 1; pointer-events: auto; }
+  .order-modal{
+    position: relative; width: 100%; max-width: 560px; max-height: 90vh;
+    overflow-y: auto; background: var(--bg-card); border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 14px; padding: 40px; box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+    transform: translateY(10px); transition: transform .25s ease;
+  }
+  .order-modal-overlay.active .order-modal{ transform: translateY(0); }
+  .order-modal-close{
+    position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+    border-radius: 50%; border: 1px solid var(--line); background: transparent;
+    color: var(--cream-muted); font-size: 1.4rem; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all .2s ease;
+  }
+  .order-modal-close:hover{ border-color: var(--gold); color: var(--gold); }
+  .order-modal-title{ font-size: clamp(1.6rem, 4vw, 2.2rem); margin-bottom: 10px; }
+  .order-modal-intro{ color: var(--cream-muted); font-size: 0.95rem; margin-bottom: 26px; }
+
+  .order-form{ display: flex; flex-direction: column; gap: 18px; }
+  .order-form-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media(max-width: 560px){ .order-form-grid{ grid-template-columns: 1fr; } }
+
+  .order-field{ display: flex; flex-direction: column; gap: 8px; }
+  .order-field > span{
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--cream-muted);
+  }
+  .order-field > span em{ color: var(--cream-muted); font-style: italic; font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .order-field input[type="text"],
+  .order-field input[type="number"],
+  .order-field select,
+  .order-field textarea{
+    background: #1f1c18; border: 1.5px solid var(--line); color: var(--cream);
+    padding: 13px 16px; border-radius: var(--radius); font-size: 0.95rem;
+    font-family: 'Work Sans', sans-serif; outline: none; transition: border-color .2s ease;
+    resize: vertical;
+  }
+  .order-field input:focus,
+  .order-field select:focus,
+  .order-field textarea:focus{ border-color: var(--gold); }
+  .order-field select{ cursor: pointer; }
+
+  .order-payment{ border: none; padding: 0; }
+  .order-payment legend{
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--cream-muted); margin-bottom: 10px; padding: 0;
+  }
+  .payment-options{ display: flex; gap: 12px; }
+  .payment-option{
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px solid var(--line); border-radius: var(--radius); padding: 13px;
+    cursor: pointer; transition: all .2s ease; font-weight: 700; font-size: 0.9rem;
+  }
+  .payment-option:has(input:checked){ border-color: var(--gold); background: rgba(212,175,55,0.08); color: var(--gold); }
+  .payment-option input{ accent-color: var(--gold); }
+
+  .order-form-error{ color: var(--red-eg); font-size: 0.85rem; font-weight: 600; min-height: 1em; }
+  .order-submit-btn{ margin-top: 4px; }
+
+  .order-success{ text-align: center; padding: 10px 0; }
+  .order-success-mark{
+    width: 64px; height: 64px; border-radius: 50%; background: rgba(212,175,55,0.12);
+    border: 2px solid var(--gold); color: var(--gold); font-size: 1.8rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
+  }
+  .order-success p{ color: var(--cream-muted); margin: 14px 0 26px; }
+  .order-success .btn{ width: 100%; justify-content: center; margin-bottom: 12px; }
+  .order-close-success{ margin-bottom: 0; }
+
+  /* ============ PANEL PRIVADO /admin ============ */
+  .admin-shell{ min-height: 100vh; }
+  .admin-login-wrap{
+    min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .admin-login-card{
+    width: 100%; max-width: 420px; background: var(--bg-card);
+    border: 1px solid rgba(212,175,55,0.3); border-radius: 14px; padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .admin-login-card .order-field{ margin-bottom: 18px; }
+  .admin-error{ color: var(--red-eg); font-size: 0.85rem; font-weight: 600; min-height: 1em; margin-bottom: 10px; }
+
+  .admin-topbar{
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    padding: 26px 0; border-bottom: 1px solid var(--line); margin-bottom: 30px;
+  }
+  .admin-filters{ display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+  .admin-filter-btn{
+    padding: 10px 18px; border-radius: 100px; border: 1.5px solid var(--line);
+    background: transparent; color: var(--cream-muted); font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all .2s ease;
+  }
+  .admin-filter-btn:hover{ border-color: var(--gold); color: var(--gold); }
+  .admin-filter-btn.active{ background: var(--gold); border-color: var(--gold); color: #000; }
+
+  .admin-orders{ display: flex; flex-direction: column; gap: 16px; }
+  .admin-order-card{
+    background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 22px 26px; display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 20px; align-items: start;
+  }
+  @media(max-width: 860px){ .admin-order-card{ grid-template-columns: 1fr; } }
+  .admin-order-main{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; }
+  @media(max-width: 500px){ .admin-order-main{ grid-template-columns: 1fr; } }
+  .admin-order-field-label{
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cream-muted); margin-bottom: 2px;
+  }
+  .admin-order-field-value{ font-size: 0.95rem; word-break: break-word; }
+  .admin-order-field-value.gold{ color: var(--gold); font-weight: 700; }
+  .admin-order-comments{ font-size: 0.88rem; color: var(--cream-muted); font-style: italic; }
+  .admin-order-meta{ display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; color: var(--cream-muted); }
+  .admin-order-status{ display: flex; flex-direction: column; gap: 10px; min-width: 150px; }
+  .admin-status-check{
+    display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
+  }
+  .admin-status-check input{ width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+  .admin-empty{ text-align: center; padding: 60px 20px; color: var(--cream-muted); }
+  .admin-loading{ text-align: center; padding: 60px 20px; color: var(--cream-muted); }

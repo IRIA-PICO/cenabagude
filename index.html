@@ -136,20 +136,9 @@
           </div>
         </div>
 
-        <!-- FORMULARIO DE PERSONALIZACIÓN -->
-        <div class="form-group-flex">
-          <input type="text" class="input-custom-name" id="customNameInput" maxlength="12" placeholder="Escribe o teu nome..." value="O TEU NOME">
-          <select class="size-picker" id="sizeSelector">
-            <option value="S">Talla S</option>
-            <option value="M" selected>Talla M</option>
-            <option value="L">Talla L</option>
-            <option value="XL">Talla XL</option>
-            <option value="XXL">Talla XXL</option>
-          </select>
-        </div>
-
-        <button class="buy-now-cta" id="addShirtBtn">
-          Pedir por WhatsApp · 25,00 €
+        <!-- ACCESO AO FORMULARIO DE PEDIDO -->
+        <button class="buy-now-cta" id="openOrderBtn" type="button">
+          HACER PEDIDO
         </button>
 
         <p style="font-size:0.75rem; color:var(--cream-muted); margin-top:12px; text-align:center;">
@@ -338,13 +327,97 @@
         <a href="https://www.instagram.com/cenabagude" target="_blank" class="btn btn-gold">
           DM por Instagram
         </a>
-        <button class="btn btn-outline" id="btnWhatsappOrder">
-          Pedir por WhatsApp
+        <button class="btn btn-outline" id="openOrderBtnContact" type="button">
+          HACER PEDIDO
         </button>
       </div>
     </div>
   </div>
 </section>
+
+
+<!-- FORMULARIO DE PEDIDO -->
+<div class="order-modal-overlay" id="orderModal" aria-hidden="true">
+  <div class="order-modal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <button class="order-modal-close" id="closeOrderModal" aria-label="Pechar">&times;</button>
+
+    <div id="orderFormView">
+      <span class="section-badge">Pedido oficial</span>
+      <h2 id="orderModalTitle" class="section-heading order-modal-title">Facer pedido</h2>
+      <p class="order-modal-intro">Enche os datos e nós encargámonos do resto. Despois contactarémoste por Instagram para confirmar os detalles.</p>
+
+      <form id="orderForm" class="order-form" novalidate>
+        <div class="order-form-grid">
+          <label class="order-field">
+            <span>Nome</span>
+            <input type="text" name="name" autocomplete="name" required placeholder="O teu nome">
+          </label>
+
+          <label class="order-field">
+            <span>Usuario de Instagram</span>
+            <input type="text" name="instagram" required placeholder="@usuario">
+          </label>
+
+          <label class="order-field">
+            <span>Talla</span>
+            <select name="size" required>
+              <option value="" selected disabled>Escolle unha talla</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+            </select>
+          </label>
+
+          <label class="order-field">
+            <span>Cantidade de camisetas</span>
+            <input type="number" name="quantity" min="1" max="20" step="1" value="1" required>
+          </label>
+        </div>
+
+        <label class="order-field">
+          <span>Ubicación/dirección onde mandar a camiseta</span>
+          <textarea name="address" rows="3" required placeholder="Indica onde queres recibir a camiseta"></textarea>
+        </label>
+
+        <fieldset class="order-field order-payment">
+          <legend>Forma de pago</legend>
+          <div class="payment-options">
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="Efectivo" required>
+              <span>Efectivo</span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="Bizum" required>
+              <span>Bizum</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <label class="order-field">
+          <span>Comentarios <em>(opcional)</em></span>
+          <textarea name="comments" rows="3" placeholder="Calquera cousa que debamos saber..."></textarea>
+        </label>
+
+        <p class="order-form-error" id="orderFormError" role="alert"></p>
+
+        <button class="buy-now-cta order-submit-btn" id="submitOrderBtn" type="submit">
+          ENVIAR PEDIDO
+        </button>
+      </form>
+    </div>
+
+    <div id="orderSuccessView" class="order-success" hidden>
+      <div class="order-success-mark">✓</div>
+      <span class="section-badge">Pedido recibido</span>
+      <h2 class="section-heading">Todo listo!</h2>
+      <p>¡Pedido recibido! Nos pondremos en contacto contigo por Instagram para confirmar os detalles.</p>
+      <a class="btn btn-gold" href="https://www.instagram.com/cenabagude" target="_blank" rel="noopener">HABLAR POR INSTAGRAM</a>
+      <button class="btn btn-outline order-close-success" id="successCloseBtn" type="button">Pechar</button>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer style="padding: 35px 0; border-top: 1px solid var(--line); text-align:center;">
@@ -354,48 +427,105 @@
   </div>
 </footer>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
-  // 1. Simulación en vivo do nome da camiseta
-  const customInput = document.getElementById('customNameInput');
-  const previewName = document.getElementById('previewName');
+  const SUPABASE_READY = Boolean(window.CENA_SUPABASE_URL && window.CENA_SUPABASE_ANON_KEY && window.supabase);
+  const db = SUPABASE_READY
+    ? window.supabase.createClient(window.CENA_SUPABASE_URL, window.CENA_SUPABASE_ANON_KEY)
+    : null;
 
-  customInput.addEventListener('input', (e) => {
-    const val = e.target.value.trim();
-    previewName.textContent = val.length > 0 ? val.toUpperCase() : "O TEU NOME";
-  });
-
-  // 2. Mini fila da panda (teaser -> liga a panda.html)
+  // Visualizador da panda
   const pandaMiniNames = ["Carlos","Ivan","Adrian","Adan","Hugo"];
   const pandaMiniRow = document.getElementById('pandaMiniRow');
-  pandaMiniNames.forEach(n => {
-    const el = document.createElement('div');
-    el.className = 'mini-avatar';
-    el.textContent = n.charAt(0);
-    el.title = n;
-    pandaMiniRow.appendChild(el);
-  });
-  const plusEl = document.createElement('div');
-  plusEl.className = 'mini-avatar plus';
-  plusEl.textContent = '+5';
-  plusEl.title = 'E 5 máis...';
-  pandaMiniRow.appendChild(plusEl);
+  if (pandaMiniRow) {
+    pandaMiniNames.forEach(n => {
+      const el = document.createElement('div');
+      el.className = 'mini-avatar';
+      el.textContent = n.charAt(0);
+      el.title = n;
+      pandaMiniRow.appendChild(el);
+    });
+    const plusEl = document.createElement('div');
+    plusEl.className = 'mini-avatar plus';
+    plusEl.textContent = '+5';
+    plusEl.title = 'E 5 máis...';
+    pandaMiniRow.appendChild(plusEl);
+  }
 
-  // 3. Pedido directo por WhatsApp (sen carriño)
-  const addShirtBtn = document.getElementById('addShirtBtn');
-  const btnWhatsappOrder = document.getElementById('btnWhatsappOrder');
+  // Sistema de pedidos
+  const orderModal = document.getElementById('orderModal');
+  const orderForm = document.getElementById('orderForm');
+  const orderFormView = document.getElementById('orderFormView');
+  const orderSuccessView = document.getElementById('orderSuccessView');
+  const orderError = document.getElementById('orderFormError');
+  const submitOrderBtn = document.getElementById('submitOrderBtn');
 
-  addShirtBtn.addEventListener('click', () => {
-    const size = document.getElementById('sizeSelector').value;
-    const name = customInput.value.trim().toUpperCase() || "CENA BAGUDE";
-    const msg = `Ola rapaces de @cenabagude! Quero pedir a Camiseta Oficial Cena Bagude:%0A%0A- Talla: ${size}%0A- Nome ás costas: ${name}%0A- Modelo: Edición Poetas do Trago%0A- Prezo: 25,00€%0A%0ACómo facemos para a recollida en Portomarín ou envío? Grazas!`;
-    window.open(`https://wa.me/?text=${msg}`, '_blank');
-  });
+  function openOrderModal() {
+    orderModal.classList.add('active');
+    orderModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
 
-  btnWhatsappOrder.addEventListener('click', () => {
-    const msg = "Ola rapaces de @cenabagude! Quería facer unha consulta sobre a camiseta.";
-    window.open(`https://wa.me/?text=${msg}`, '_blank');
+  function closeOrderModal() {
+    orderModal.classList.remove('active');
+    orderModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('openOrderBtn')?.addEventListener('click', openOrderModal);
+  document.getElementById('openOrderBtnContact')?.addEventListener('click', openOrderModal);
+  document.getElementById('closeOrderModal')?.addEventListener('click', closeOrderModal);
+  document.getElementById('successCloseBtn')?.addEventListener('click', closeOrderModal);
+  orderModal?.addEventListener('click', (e) => { if (e.target === orderModal) closeOrderModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && orderModal?.classList.contains('active')) closeOrderModal(); });
+
+  orderForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    orderError.textContent = '';
+
+    if (!orderForm.checkValidity()) {
+      orderForm.reportValidity();
+      return;
+    }
+
+    if (!SUPABASE_READY) {
+      orderError.textContent = 'O sistema de pedidos aínda non está configurado. Contacta con Cena Bagude por Instagram.';
+      return;
+    }
+
+    const data = new FormData(orderForm);
+    const payload = {
+      name: String(data.get('name') || '').trim(),
+      instagram: String(data.get('instagram') || '').trim(),
+      size: String(data.get('size') || ''),
+      quantity: Number(data.get('quantity')),
+      address: String(data.get('address') || '').trim(),
+      payment_method: String(data.get('payment_method') || ''),
+      comments: String(data.get('comments') || '').trim() || null
+    };
+
+    submitOrderBtn.disabled = true;
+    submitOrderBtn.textContent = 'ENVIANDO...';
+
+    const { error } = await db.from('orders').insert(payload);
+
+    submitOrderBtn.disabled = false;
+    submitOrderBtn.textContent = 'ENVIAR PEDIDO';
+
+    if (error) {
+      console.error(error);
+      orderError.textContent = 'Non puidemos gardar o pedido. Téntao de novo ou escríbenos por Instagram.';
+      return;
+    }
+
+    orderForm.reset();
+    orderForm.querySelector('[name="quantity"]').value = 1;
+    orderFormView.hidden = true;
+    orderSuccessView.hidden = false;
   });
 </script>
 
-</body>
+
 </html>

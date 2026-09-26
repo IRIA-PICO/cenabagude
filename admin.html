@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="gl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de Pedidos · Cena Bagude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- HEADER SINXELO -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="index.html" class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+      </div>
+      <div>
+        <div class="brand-text">CENA<span>BAGUDE</span></div>
+      </div>
+      <span class="brand-badge">Panel privado</span>
+    </a>
+  </div>
+</header>
+
+<div class="admin-shell wrap">
+
+  <!-- LOGIN -->
+  <div id="loginView" class="admin-login-wrap">
+    <div class="admin-login-card glass">
+      <span class="section-badge">Acceso encargados</span>
+      <h1 class="section-heading" style="font-size: clamp(1.6rem, 4vw, 2.2rem); margin-bottom: 20px;">Iniciar sesión</h1>
+
+      <form id="loginForm" novalidate>
+        <label class="order-field">
+          <span>Email</span>
+          <input type="email" name="email" required autocomplete="username" placeholder="encargado@cenabagude.com">
+        </label>
+        <label class="order-field">
+          <span>Contrasinal</span>
+          <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+        </label>
+        <p class="admin-error" id="loginError"></p>
+        <button class="buy-now-cta" id="loginBtn" type="submit">ENTRAR</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PANEL (oculto ata iniciar sesión) -->
+  <div id="panelView" hidden>
+    <div class="admin-topbar">
+      <div>
+        <span class="section-badge">Panel privado</span>
+        <h1 class="section-heading" style="font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 0;">Pedidos</h1>
+      </div>
+      <button class="btn btn-outline btn-sm" id="logoutBtn" type="button">Pechar sesión</button>
+    </div>
+
+    <div class="admin-filters" id="adminFilters">
+      <button class="admin-filter-btn active" data-filter="todos">Todos</button>
+      <button class="admin-filter-btn" data-filter="pendientes">Pendientes</button>
+      <button class="admin-filter-btn" data-filter="sin_pagar">Sin pagar</button>
+      <button class="admin-filter-btn" data-filter="preparados">Preparados</button>
+      <button class="admin-filter-btn" data-filter="entregados">Entregados</button>
+    </div>
+
+    <div id="ordersContainer" class="admin-orders">
+      <div class="admin-loading">Cargando pedidos...</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer style="padding: 35px 0; border-top: 1px solid var(--line); text-align:center; margin-top: 60px;">
+  <div class="wrap">
+    <p style="color:var(--cream-muted); font-size:0.85rem;">CENA BAGUDE · Panel privado de pedidos</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+  const SUPABASE_READY = Boolean(window.CENA_SUPABASE_URL && window.CENA_SUPABASE_ANON_KEY && window.supabase);
+  const db = SUPABASE_READY
+    ? window.supabase.createClient(window.CENA_SUPABASE_URL, window.CENA_SUPABASE_ANON_KEY)
+    : null;
+
+  const loginView = document.getElementById('loginView');
+  const panelView = document.getElementById('panelView');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const ordersContainer = document.getElementById('ordersContainer');
+  const adminFilters = document.getElementById('adminFilters');
+
+  let allOrders = [];
+  let currentFilter = 'todos';
+
+  function showPanel(){
+    loginView.hidden = true;
+    panelView.hidden = false;
+    loadOrders();
+  }
+
+  function showLogin(){
+    loginView.hidden = false;
+    panelView.hidden = true;
+  }
+
+  async function checkSession(){
+    if (!SUPABASE_READY) {
+      loginError.textContent = 'O panel aínda non está configurado (falta supabase-config.js).';
+      return;
+    }
+    const { data } = await db.auth.getSession();
+    if (data?.session) showPanel(); else showLogin();
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.textContent = '';
+    if (!SUPABASE_READY) {
+      loginError.textContent = 'O panel aínda non está configurado.';
+      return;
+    }
+    const data = new FormData(loginForm);
+    const email = String(data.get('email') || '').trim();
+    const password = String(data.get('password') || '');
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'ENTRANDO...';
+
+    const { error } = await db.auth.signInWithPassword({ email, password });
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'ENTRAR';
+
+    if (error) {
+      loginError.textContent = 'Email ou contrasinal incorrectos.';
+      return;
+    }
+    showPanel();
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await db.auth.signOut();
+    showLogin();
+  });
+
+  adminFilters.addEventListener('click', (e) => {
+    const btn = e.target.closest('.admin-filter-btn');
+    if (!btn) return;
+    currentFilter = btn.dataset.filter;
+    [...adminFilters.children].forEach(b => b.classList.toggle('active', b === btn));
+    renderOrders();
+  });
+
+  async function loadOrders(){
+    ordersContainer.innerHTML = '<div class="admin-loading">Cargando pedidos...</div>';
+    const { data, error } = await db
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      ordersContainer.innerHTML = '<div class="admin-empty">Non se puideron cargar os pedidos.</div>';
+      console.error(error);
+      return;
+    }
+    allOrders = data || [];
+    renderOrders();
+  }
+
+  function filterOrders(orders){
+    switch(currentFilter){
+      case 'pendientes': return orders.filter(o => !o.delivered);
+      case 'sin_pagar': return orders.filter(o => !o.paid);
+      case 'preparados': return orders.filter(o => o.prepared);
+      case 'entregados': return orders.filter(o => o.delivered);
+      default: return orders;
+    }
+  }
+
+  function renderOrders(){
+    const orders = filterOrders(allOrders);
+    if (!orders.length) {
+      ordersContainer.innerHTML = '<div class="admin-empty">Non hai pedidos neste filtro.</div>';
+      return;
+    }
+    ordersContainer.innerHTML = orders.map(o => orderCardHTML(o)).join('');
+  }
+
+  function orderCardHTML(o){
+    const date = new Date(o.created_at).toLocaleString('gl-ES', { dateStyle: 'short', timeStyle: 'short' });
+    return `
+      <div class="admin-order-card glass" data-id="${o.id}">
+        <div class="admin-order-main">
+          <div>
+            <div class="admin-order-field-label">Nome</div>
+            <div class="admin-order-field-value">${escapeHTML(o.name)}</div>
+          </div>
+          <div>
+            <div class="admin-order-field-label">Instagram</div>
+            <div class="admin-order-field-value gold">${escapeHTML(o.instagram)}</div>
+          </div>
+          <div>
+            <div class="admin-order-field-label">Talla / Cantidade</div>
+            <div class="admin-order-field-value">${escapeHTML(o.size)} · ${o.quantity} ud.</div>
+          </div>
+          <div>
+            <div class="admin-order-field-label">Pago</div>
+            <div class="admin-order-field-value">${escapeHTML(o.payment_method)}</div>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <div class="admin-order-field-label">Ubicación</div>
+            <div class="admin-order-field-value">${escapeHTML(o.address)}</div>
+          </div>
+          ${o.comments ? `
+          <div style="grid-column: 1 / -1;">
+            <div class="admin-order-field-label">Comentarios</div>
+            <div class="admin-order-comments">"${escapeHTML(o.comments)}"</div>
+          </div>` : ''}
+          <div class="admin-order-meta" style="grid-column: 1 / -1;">
+            <span>Recibido: ${date}</span>
+          </div>
+        </div>
+
+        <div class="admin-order-status">
+          <label class="admin-status-check">
+            <input type="checkbox" data-field="paid" ${o.paid ? 'checked' : ''}>
+            <span>Pagado</span>
+          </label>
+          <label class="admin-status-check">
+            <input type="checkbox" data-field="prepared" ${o.prepared ? 'checked' : ''}>
+            <span>Preparado</span>
+          </label>
+          <label class="admin-status-check">
+            <input type="checkbox" data-field="delivered" ${o.delivered ? 'checked' : ''}>
+            <span>Entregado</span>
+          </label>
+        </div>
+      </div>
+    `;
+  }
+
+  ordersContainer.addEventListener('change', async (e) => {
+    const input = e.target.closest('input[type="checkbox"][data-field]');
+    if (!input) return;
+    const card = e.target.closest('.admin-order-card');
+    const id = card.dataset.id;
+    const field = input.dataset.field;
+    const value = input.checked;
+
+    input.disabled = true;
+    const { error } = await db.from('orders').update({ [field]: value }).eq('id', id);
+    input.disabled = false;
+
+    if (error) {
+      console.error(error);
+      input.checked = !value;
+      return;
+    }
+    const order = allOrders.find(o => o.id === id);
+    if (order) order[field] = value;
+    if (currentFilter !== 'todos') renderOrders();
+  });
+
+  function escapeHTML(str){
+    return String(str ?? '').replace(/[&<>"']/g, m => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    }[m]));
+  }
+
+  checkSession();
+</script>
+
+</body>
+</html>
