@@ -153,7 +153,10 @@
 <!-- PRÓXIMAMENTE -->
 <section>
   <div class="wrap">
-    <div class="panda-cta-box glass">
+    <div class="panda-cta-box glass hype-box">
+      <span class="spark" style="left:12%; animation-delay:0s;"></span>
+      <span class="spark" style="left:50%; animation-delay:1s;"></span>
+      <span class="spark" style="left:82%; animation-delay:2s;"></span>
       <span class="section-badge">Moi Pronto</span>
       <h2 class="section-heading hype-heading" style="margin-top:14px;">
         <span class="hype-intro">Prepara o corpo,</span>
@@ -354,28 +357,68 @@
             <span>Usuario de Instagram</span>
             <input type="text" name="instagram" required placeholder="@usuario">
           </label>
+        </div>
 
-          <label class="order-field">
+        <label class="order-field">
+          <span>Alcume ou nome para a camiseta</span>
+          <input type="text" name="print_name" id="printNameInput" required maxlength="20" placeholder="O que queres que pareza detrás, en maiúsculas">
+        </label>
+
+        <div class="interactive-back-preview" style="margin: 0;">
+          <span class="preview-label">Así quedará detrás:</span>
+          <div class="preview-mockup-name" id="modalPreviewName" style="font-size:clamp(1.4rem,5vw,2rem); min-height:38px;">O TEU NOME</div>
+        </div>
+
+        <div class="order-form-grid">
+          <div class="order-field">
             <span>Talla</span>
-            <select name="size" required>
-              <option value="" selected disabled>Escolle unha talla</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-            </select>
-          </label>
+            <div class="size-selector-grid">
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="S" required>
+                <span class="size-pill-box">S</span>
+              </label>
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="M" required>
+                <span class="size-pill-box">M</span>
+              </label>
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="L" required>
+                <span class="size-pill-box">L</span>
+              </label>
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="XL" required>
+                <span class="size-pill-box">XL</span>
+              </label>
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="XXL" required>
+                <span class="size-pill-box">XXL</span>
+              </label>
+              <label class="size-pill-label">
+                <input type="radio" name="size" value="+XL" required>
+                <span class="size-pill-box">+XL</span>
+              </label>
+            </div>
+          </div>
 
           <label class="order-field">
             <span>Cantidade de camisetas</span>
-            <input type="number" name="quantity" min="1" max="20" step="1" value="1" required>
+            <div class="quantity-stepper">
+              <button type="button" class="stepper-btn" id="qtyMinusBtn" aria-label="Restar">−</button>
+              <input type="number" class="stepper-input" name="quantity" id="qtyInput" min="1" max="20" step="1" value="1" required readonly>
+              <button type="button" class="stepper-btn" id="qtyPlusBtn" aria-label="Sumar">+</button>
+            </div>
           </label>
+        </div>
+
+        <div class="order-summary-box">
+          <span class="summary-label">Total</span>
+          <span class="summary-price" id="orderTotalPrice">25,00 €</span>
         </div>
 
         <label class="order-field">
           <span>Ubicación/dirección onde mandar a camiseta</span>
-          <textarea name="address" rows="3" required placeholder="Indica onde queres recibir a camiseta"></textarea>
+          <textarea name="address" rows="3" required minlength="10" placeholder="Ex: Portomarín, Rúa do Camiño 5, ou punto de recollida acordado"></textarea>
+          <small style="color:var(--cream-muted); font-size:0.78rem; margin-top:2px;">Indica pobo/parroquia, rúa e número, ou o punto de entrega que acordastes.</small>
         </label>
 
         <fieldset class="order-field order-payment">
@@ -417,10 +460,16 @@
 </div>
 
 <!-- FOOTER -->
+<!-- BOTÓN FLOTANTE DE PEDIDO (SÓ MÓBIL) -->
+<button class="mobile-order-fab" id="mobileOrderFab" type="button">
+  🛒 Pedir Camiseta
+</button>
+
 <footer style="padding: 35px 0; border-top: 1px solid var(--line); text-align:center;">
   <div class="wrap">
     <p style="font-family:'Anton'; font-size:1.2rem; color:var(--gold); letter-spacing:0.06em;">CENA BAGUDE · PORTOMARÍN</p>
     <p style="color:var(--cream-muted); font-size:0.85rem; margin-top:6px;">Feito con amigos, queimada e Estrella Galicia. © 2026</p>
+    <a href="admin.html" class="footer-admin-link">🔒 Acceso Xestión Pedidos</a>
   </div>
 </footer>
 
@@ -458,21 +507,54 @@
   const orderSuccessView = document.getElementById('orderSuccessView');
   const orderError = document.getElementById('orderFormError');
   const submitOrderBtn = document.getElementById('submitOrderBtn');
+  const SHIRT_PRICE = 25;
+
+  // Preview en directo do nome/alcume na camiseta
+  const printNameInput = document.getElementById('printNameInput');
+  const modalPreviewName = document.getElementById('modalPreviewName');
+  const pagePreviewName = document.getElementById('previewName');
+  printNameInput?.addEventListener('input', () => {
+    const val = printNameInput.value.trim().toUpperCase() || 'O TEU NOME';
+    if (modalPreviewName) modalPreviewName.textContent = val;
+    if (pagePreviewName) pagePreviewName.textContent = val;
+  });
+
+  // Stepper de cantidade + prezo total en directo
+  const qtyInput = document.getElementById('qtyInput');
+  const qtyMinusBtn = document.getElementById('qtyMinusBtn');
+  const qtyPlusBtn = document.getElementById('qtyPlusBtn');
+  const orderTotalPrice = document.getElementById('orderTotalPrice');
+
+  function updateOrderTotal(){
+    const qty = Number(qtyInput.value) || 1;
+    if (orderTotalPrice) orderTotalPrice.textContent = (qty * SHIRT_PRICE).toLocaleString('gl-ES', { minimumFractionDigits: 2 }) + ' €';
+  }
+  qtyMinusBtn?.addEventListener('click', () => {
+    qtyInput.value = Math.max(1, Number(qtyInput.value) - 1);
+    updateOrderTotal();
+  });
+  qtyPlusBtn?.addEventListener('click', () => {
+    qtyInput.value = Math.min(20, Number(qtyInput.value) + 1);
+    updateOrderTotal();
+  });
 
   function openOrderModal() {
     orderModal.classList.add('active');
     orderModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    document.getElementById('mobileOrderFab')?.classList.add('hidden');
   }
 
   function closeOrderModal() {
     orderModal.classList.remove('active');
     orderModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    document.getElementById('mobileOrderFab')?.classList.remove('hidden');
   }
 
   document.getElementById('openOrderBtn')?.addEventListener('click', openOrderModal);
   document.getElementById('openOrderBtnContact')?.addEventListener('click', openOrderModal);
+  document.getElementById('mobileOrderFab')?.addEventListener('click', openOrderModal);
   document.getElementById('closeOrderModal')?.addEventListener('click', closeOrderModal);
   document.getElementById('successCloseBtn')?.addEventListener('click', closeOrderModal);
   orderModal?.addEventListener('click', (e) => { if (e.target === orderModal) closeOrderModal(); });
@@ -487,6 +569,14 @@
       return;
     }
 
+    const addressValue = String(new FormData(orderForm).get('address') || '').trim();
+    const addressWords = addressValue.split(/\s+/).filter(Boolean);
+    if (addressWords.length < 3) {
+      orderError.textContent = 'Escribe unha dirección completa: pobo/parroquia, rúa e número, ou o punto de recollida acordado (non vale só unha palabra).';
+      orderForm.querySelector('[name="address"]').focus();
+      return;
+    }
+
     if (!SUPABASE_READY) {
       orderError.textContent = 'O sistema de pedidos aínda non está configurado. Contacta con Cena Bagude por Instagram.';
       return;
@@ -496,6 +586,7 @@
     const payload = {
       name: String(data.get('name') || '').trim(),
       instagram: String(data.get('instagram') || '').trim(),
+      print_name: String(data.get('print_name') || '').trim().toUpperCase(),
       size: String(data.get('size') || ''),
       quantity: Number(data.get('quantity')),
       address: String(data.get('address') || '').trim(),
@@ -519,6 +610,8 @@
 
     orderForm.reset();
     orderForm.querySelector('[name="quantity"]').value = 1;
+    updateOrderTotal();
+    if (modalPreviewName) modalPreviewName.textContent = 'O TEU NOME';
     orderFormView.hidden = true;
     orderSuccessView.hidden = false;
   });

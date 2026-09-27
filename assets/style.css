@@ -785,3 +785,114 @@
     0%{ background-position: 200% center; }
     100%{ background-position: -200% center; }
   }
+
+  /* ============ MEJORAS FORMULARIO MODERNO & MÓVIL ============ */
+
+  /* Selector de Tallas con Botóns Táctiles */
+  .size-selector-grid{
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 4px;
+  }
+  @media(max-width: 460px){
+    .size-selector-grid{ grid-template-columns: repeat(3, 1fr); }
+  }
+  .size-pill-label{ cursor: pointer; text-align: center; }
+  .size-pill-label input[type="radio"]{ display: none; }
+  .size-pill-box{
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px 4px; background: #1f1c18; border: 1.5px solid var(--line);
+    border-radius: var(--radius); font-family: 'Anton', sans-serif; font-size: clamp(0.85rem, 2.6vw, 1.1rem);
+    letter-spacing: 0.03em; color: var(--cream); transition: all 0.2s ease; user-select: none;
+  }
+  .size-pill-label input:checked + .size-pill-box{
+    background: var(--gold); color: #000; border-color: var(--gold);
+    transform: translateY(-2px); box-shadow: 0 4px 15px var(--gold-glow);
+  }
+
+  /* Control de Cantidade con botóns - / + */
+  .quantity-stepper{
+    display: flex; align-items: center; background: #1f1c18;
+    border: 1.5px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; height: 48px; width: 140px;
+  }
+  .stepper-btn{
+    background: transparent; border: none; color: var(--gold); font-size: 1.3rem;
+    font-weight: 800; width: 44px; height: 100%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  .stepper-btn:hover{ background: rgba(212, 175, 55, 0.15); }
+  .stepper-input{
+    width: 52px; text-align: center; background: transparent; border: none;
+    color: #fff; font-family: 'Anton', sans-serif; font-size: 1.3rem; outline: none;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  .stepper-input::-webkit-outer-spin-button,
+  .stepper-input::-webkit-inner-spin-button{
+    -webkit-appearance: none; margin: 0;
+  }
+
+  /* Barra de Resumo de Prezo */
+  .order-summary-box{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px; background: rgba(212, 175, 55, 0.08);
+    border: 1.5px dashed rgba(212, 175, 55, 0.4); border-radius: var(--radius); margin-top: 6px;
+  }
+  .summary-label{ font-size: 0.85rem; text-transform: uppercase; font-weight: 700; color: var(--cream-muted); }
+  .summary-price{ font-family: 'Anton', sans-serif; font-size: 1.6rem; color: var(--gold); }
+
+  /* Botón flotante de pedido en móbil */
+  .mobile-order-fab{
+    display: none; position: fixed; left: 16px; right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 500; background: var(--gold); color: #000; border: none;
+    border-radius: 100px; padding: 15px; font-family: 'Anton', sans-serif;
+    font-size: 1rem; letter-spacing: 0.04em; text-transform: uppercase;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5); cursor: pointer; transition: opacity .2s, transform .2s;
+  }
+  .mobile-order-fab.hidden{ opacity: 0; pointer-events: none; transform: translateY(10px); }
+  @media(max-width: 760px){ .mobile-order-fab{ display: block; } }
+
+  /* Enlace discreto ao panel de admin no footer */
+  .footer-admin-link{
+    display: inline-block; margin-top: 14px; font-size: 0.75rem;
+    color: var(--cream-muted); opacity: 0.55; text-decoration: none; transition: opacity .2s;
+  }
+  .footer-admin-link:hover{ opacity: 1; color: var(--gold); }
+
+  /* ============ CAIXA "MOI PRONTO" CON MOVEMENTO ============ */
+  .hype-box{
+    position: relative; overflow: hidden;
+  }
+  .hype-box::before{
+    content: ""; position: absolute; top: 0; left: -60%;
+    width: 45%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(212,175,55,0.22), transparent);
+    transform: skewX(-20deg);
+    animation: hypeSweep 4.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes hypeSweep{
+    0%{ left: -60%; }
+    45%{ left: 130%; }
+    100%{ left: 130%; }
+  }
+  .hype-box .spark{
+    position: absolute; bottom: 20px; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold); box-shadow: 0 0 10px 2px var(--gold-glow);
+    opacity: 0; animation: sparkFloat 3s ease-in infinite;
+    pointer-events: none;
+  }
+  @keyframes sparkFloat{
+    0%{ transform: translateY(0) scale(0.5); opacity: 0; }
+    15%{ opacity: 1; }
+    80%{ opacity: 0.6; }
+    100%{ transform: translateY(-90px) scale(1.1); opacity: 0; }
+  }
+.hype-section, 
+.moi-pronto-box,
+div:has(> .hype-heading) {
+  margin-bottom: 5rem; /* Da aire entre tarjetas oscuras */
+}
+.origin-section {
+  padding-top: 60px;
+  margin-top: 20px;
+}

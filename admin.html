@@ -220,7 +220,8 @@
     if (!searchTerm) return orders;
     return orders.filter(o =>
       (o.name || '').toLowerCase().includes(searchTerm) ||
-      (o.instagram || '').toLowerCase().includes(searchTerm)
+      (o.instagram || '').toLowerCase().includes(searchTerm) ||
+      (o.print_name || '').toLowerCase().includes(searchTerm)
     );
   }
 
@@ -272,6 +273,10 @@
           <div>
             <div class="admin-order-field-label">Talla / Cantidade</div>
             <div class="admin-order-field-value">${escapeHTML(o.size)} · ${o.quantity} ud.</div>
+          </div>
+          <div>
+            <div class="admin-order-field-label">Nome/Alcume na camiseta</div>
+            <div class="admin-order-field-value gold">${escapeHTML(o.print_name || '—')}</div>
           </div>
           <div>
             <div class="admin-order-field-label">Pago</div>
