@@ -48,7 +48,7 @@
   }
   .header-inner{
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 0;
+    padding: 14px 0; flex-wrap: wrap; row-gap: 10px;
   }
   .brand{display: flex; align-items: center; gap: 12px;}
   .brand-logo{
@@ -62,7 +62,7 @@
     font-size: 0.65rem; background: var(--red-eg); color: #fff; font-weight: 800;
     padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase;
   }
-  nav.main-nav{display: flex; align-items: center; gap: 24px;}
+  nav.main-nav{display: flex; align-items: center; gap: 24px; flex-wrap: wrap; row-gap: 10px;}
   nav.main-nav a{
     font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
     color: var(--cream-muted); transition: color .2s;
@@ -531,6 +531,14 @@
   .tenda-link-btn:hover{ transform: translateY(-2px); box-shadow: 0 0 15px rgba(255,255,255,0.18); border-color: var(--gold); }
   .nav-btn-ig:hover{ transform: translateY(-2px); }
 
+  @media(max-width: 700px){
+    .brand-badge{ display: none; }
+    nav.main-nav{ gap: 14px; justify-content: center; }
+    nav.main-nav > a:not(.nav-btn-ig):not(.tenda-link-btn){ font-size: 0.78rem; }
+    .nav-btn-ig, .tenda-link-btn{ padding: 8px 12px; }
+    .nav-label{ display: none; }
+  }
+
   .panda-cta-box{
     margin-top: 60px; text-align:center; padding: 46px; border-radius: 12px;
   }
@@ -561,21 +569,32 @@
     border-radius: 100px; margin-bottom: 12px; background: rgba(212,175,55,0.08);
   }
 
-  .cards-3col.festa-bento{
-    display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  .festa-tickets{
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 10px;
   }
-  .festa-bento .feature-card:nth-child(1){ grid-column: span 2; }
-  .festa-bento .feature-card:nth-child(2){ grid-column: span 2; }
-  .festa-bento .feature-card:nth-child(3){ grid-column: span 1; }
-  .festa-bento .feature-card:nth-child(4){ grid-column: span 3; }
-  .festa-bento .feature-card{ display:flex; flex-direction:column; }
-  .festa-bento .feature-card:nth-child(4){ flex-direction:row; align-items:center; gap:22px; }
-  .festa-bento .feature-card:nth-child(4) .feature-card-icon{ margin-bottom:0; flex-shrink:0; }
-  @media(max-width:860px){
-    .cards-3col.festa-bento{ grid-template-columns: 1fr; }
-    .festa-bento .feature-card{ grid-column: span 1 !important; flex-direction:column !important; }
-    .festa-bento .feature-card:nth-child(4) .feature-card-icon{ margin-bottom:20px !important; }
+  @media(max-width: 860px){ .festa-tickets{ grid-template-columns: 1fr; } }
+  .festa-ticket{
+    position: relative; background: var(--bg-card); border: 2px dashed rgba(212,175,55,0.4);
+    border-radius: 14px; padding: 32px 26px 28px; overflow: hidden;
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform .3s ease, border-color .3s ease;
   }
+  .festa-ticket:nth-child(1){ --tilt: -1.4deg; }
+  .festa-ticket:nth-child(2){ --tilt: 1deg; }
+  .festa-ticket:nth-child(3){ --tilt: -0.8deg; }
+  .festa-ticket:hover{ transform: rotate(0deg) translateY(-6px); border-color: var(--gold); border-style: solid; }
+  .festa-ticket-num{
+    position: absolute; top: -18px; right: -6px; font-family: 'Anton', sans-serif;
+    font-size: 5.5rem; color: rgba(212,175,55,0.1); line-height: 1; pointer-events: none;
+  }
+  .festa-ticket-icon{
+    width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle, #2b241a, #141210); border: 1.5px solid var(--gold);
+    color: var(--gold); display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px; position: relative; z-index: 1;
+  }
+  .festa-ticket h3{ font-size: 1.3rem; margin-bottom: 10px; position: relative; z-index: 1; }
+  .festa-ticket p{ color: var(--cream-muted); font-size: 0.95rem; position: relative; z-index: 1; }
   /* ============ FORMULARIO DE PEDIDO (MODAL) ============ */
   .order-modal-overlay{
     position: fixed; inset: 0; background: rgba(6,5,4,0.82);
@@ -733,3 +752,36 @@
   .admin-status-check input{ width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
   .admin-empty{ text-align: center; padding: 60px 20px; color: var(--cream-muted); }
   .admin-loading{ text-align: center; padding: 60px 20px; color: var(--cream-muted); }
+
+  /* ============ TITULAR "MOI PRONTO" CON EFECTO ============ */
+  .hype-heading{
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+    gap: 0.3em; row-gap: 0.1em; font-size: clamp(1.35rem, 5.5vw, 2.2rem);
+  }
+  .hype-intro{
+    display: inline-block;
+    animation: hypePopIn .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .hype-gold{
+    display: inline-block;
+    background: linear-gradient(90deg, var(--gold), #fff2c2 45%, var(--gold));
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: hypePopIn .6s cubic-bezier(.34,1.56,.64,1) .22s both,
+               hypeGlow 2.4s ease-in-out 1s infinite,
+               hypeShine 3.5s linear 1s infinite;
+  }
+  .hype-big{ font-size: 1.25em; }
+  @keyframes hypePopIn{
+    0%{ transform: scale(0.3) rotate(-4deg); opacity: 0; }
+    65%{ transform: scale(1.15) rotate(1deg); opacity: 1; }
+    100%{ transform: scale(1) rotate(0deg); }
+  }
+  @keyframes hypeGlow{
+    0%, 100%{ filter: drop-shadow(0 0 6px var(--gold-glow)); }
+    50%{ filter: drop-shadow(0 0 16px var(--gold-glow)) drop-shadow(0 0 28px rgba(212,175,55,0.5)); }
+  }
+  @keyframes hypeShine{
+    0%{ background-position: 200% center; }
+    100%{ background-position: -200% center; }
+  }
